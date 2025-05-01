@@ -5,25 +5,48 @@ import DomainCard from "../DomainCard/DomainCard";
 import { useState } from "react";
 import { useAuth } from "@/context/user";
 import { createDomain, getDomains } from "@/services/domain";
-import { getDomainUrls } from "@/services/url";
-import { toast, ToastContainer } from "react-toastify";
+import { createDomainUrl, getDomainUrls } from "@/services/url";
+import { toast } from "sonner";
 import "react-toastify/dist/ReactToastify.css";
-
+import { Button } from "@/components/ui/button";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
 interface IProps {
-  initialDomains: Domain[];
+  initialDomains: Domain[] | undefined;
 }
 
-export default function DomainViewer({ initialDomains }: IProps) {
-  const [domains, setDomains] = useState<Domain[]>(initialDomains);
+export default function AssetViewer({ initialDomains }: IProps) {
+  const [domains, setDomains] = useState<Domain[]>(initialDomains || []);
   const { token } = useAuth();
-  const [showModal, setShowModal] = useState(false); // State to control modal visibility
-  const [newUrl, setNewUrl] = useState(""); // State for the new URL
-  const [subPages, setSubPages] = useState<string[]>([]); // State for subpages (start empty)
+  const [error, setError] = useState("");
+  const [selectedDomainId, setSelectedDomainId] = useState<
+    string | undefined
+  >();
 
+  const [openDomainDialog, setOpenDomainDialog] = useState(false);
+  const [openPageDialog, setOpenPageDialog] = useState(false);
+  const [newDomain, setNewDomain] = useState("");
+  const [newPage, setNewPage] = useState("");
+  const [loadingSubpage, setLoadingSubpage] = useState(false);
   const refetchDomains = async () => {
     try {
       if (!token) {
-        console.error("No token found");
         return;
       }
       const domains: Domain[] = await getDomains(token);
@@ -35,131 +58,183 @@ export default function DomainViewer({ initialDomains }: IProps) {
         })
       );
 
-      setDomains(domainsList); // Update the state with new data
-    } catch (error) {
-      console.error("Error refetching domains:", error);
-    }
+      setDomains(domainsList);
+    } catch {}
   };
 
   const handleAddUrl = async () => {
     try {
       if (!token) {
-        toast.error("No token found. Please log in.");
+        return;
+      }
+      setLoadingSubpage(true);
+
+      const domainRegex = /^[a-zA-Z0-9-]+\.[a-zA-Z]{2,}$/;
+      if (!domainRegex.test(newDomain)) {
+        setError("Invalid domain format.");
+        setLoadingSubpage(false);
         return;
       }
 
-      // Validate the domain format
-      const domainRegex = /^[a-zA-Z0-9-]+\.[a-zA-Z]{2,}$/; // Matches domains like example.com
-      if (!domainRegex.test(newUrl)) {
-        toast.error(
-          "Invalid domain format. Please enter a valid domain like example.com."
-        );
-        return;
+      const op = await createDomain(newDomain, token);
+      if (op.domain) {
+        setOpenDomainDialog(false);
+        setLoadingSubpage(false);
+        toast("Domain has been created.");
+      } else {
+        toast("Failed to add domain. Please try again.");
       }
-
-      await createDomain(newUrl, token);
-      toast.success("Domain added successfully!");
-
-      setShowModal(false);
-      setNewUrl("");
-      setSubPages([]);
+      setLoadingSubpage(false);
+      setNewDomain("");
+      setError("");
       await refetchDomains();
-    } catch (error) {
-      toast.error("Error adding new URL. Please try again.");
-      console.error("Error adding new URL:", error);
+    } catch {
+      toast("Failed to add domain. Please try again.");
     }
   };
 
-  const handleAddSubPage = () => {
-    setSubPages([...subPages, ""]); // Add an empty subpage input
-  };
+  const handleAddPage = async () => {
+    const pageRegex =
+      /^https?:\/\/(?:www\.)?[a-zA-Z0-9-]+\.[a-zA-Z]{2,}(\/[\w\-./]*)?$/;
 
-  const handleSubPageChange = (index: number, value: string) => {
-    const updatedSubPages = [...subPages];
-    updatedSubPages[index] = value;
-    setSubPages(updatedSubPages);
+    if (!pageRegex.test(newPage) && Number(selectedDomainId) != -1) {
+      setError("Invalid domain format.");
+      setLoadingSubpage(false);
+      return;
+    }
+    if (Number(selectedDomainId) === -1) {
+      setError("Please choose a domain before adding pages.");
+      setLoadingSubpage(false);
+      return;
+    }
+
+    try {
+      await createDomainUrl(Number(selectedDomainId), newPage, token!);
+      toast("Page added successfully");
+      setOpenPageDialog(false);
+      setNewPage("");
+      refetchDomains();
+    } catch (error) {
+      toast(error instanceof Error ? error.message : "Failed to delete page");
+    }
   };
 
   return (
     <div className="p-6 max-w-5xl mx-auto space-y-6">
-      <ToastContainer /> {/* Toast container to display notifications */}
       <h1 className="text-3xl font-bold mb-8">Domain Dashboard</h1>
-      {/* Add New URL Button */}
-      <button
-        onClick={() => setShowModal(true)}
-        className="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600 transition"
-      >
-        Add New URL
-      </button>
-      {/* Modal for Adding New URL */}
-      {showModal && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center">
-          <div className="bg-white p-6 rounded-lg shadow-lg w-full max-w-md">
-            <h2 className="text-xl font-bold mb-4">Add New URL</h2>
-
-            {/* Input for New URL */}
-            <div className="mb-4">
-              <label className="block text-sm font-medium text-gray-700">
-                URL
-              </label>
-              <input
-                type="text"
-                value={newUrl}
-                onChange={(e) => setNewUrl(e.target.value)}
-                className="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
+      <Dialog open={openDomainDialog} onOpenChange={setOpenDomainDialog}>
+        <DialogTrigger asChild>
+          <Button
+            variant="outline"
+            onClick={() => {
+              setError("");
+            }}
+          >
+            Add Domain
+          </Button>
+        </DialogTrigger>
+        <DialogContent className="sm:max-w-[425px]">
+          <DialogHeader>
+            <DialogTitle>Add Domain</DialogTitle>
+            <DialogDescription>
+              Add new domains here. Click save when you are done.
+            </DialogDescription>
+          </DialogHeader>
+          <div className="grid gap-4 py-4">
+            <div className="grid grid-cols-4 items-center gap-4">
+              <Label htmlFor="name" className="text-right">
+                Domain Name
+              </Label>
+              <Input
+                id="domainName"
+                placeholder="example.com"
+                className="col-span-3"
+                onChange={(e) => setNewDomain(e.target.value)}
               />
             </div>
+          </div>
+          {error && <p className="text-red-500 text-sm mb-1">{error}</p>}
+          <DialogFooter>
+            <Button onClick={handleAddUrl} disabled={loadingSubpage}>
+              Save
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
 
-            {/* Inputs for Subpages */}
-            {subPages.length > 0 && (
-              <div className="mb-4">
-                <label className="block text-sm font-medium text-gray-700">
-                  Subpages (Optional)
-                </label>
-                {subPages.map((subPage, index) => (
-                  <input
-                    key={index}
-                    type="text"
-                    value={subPage}
-                    onChange={(e) => handleSubPageChange(index, e.target.value)}
-                    className="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 sm:text-sm mb-2"
-                  />
-                ))}
-              </div>
-            )}
-            <button
-              onClick={handleAddSubPage}
-              className="text-blue-500 text-sm hover:underline"
-            >
-              + Add Subpage
-            </button>
-
-            {/* Modal Actions */}
-            <div className="flex justify-end space-x-2 mt-4">
-              <button
-                onClick={() => setShowModal(false)}
-                className="px-4 py-2 bg-gray-300 text-gray-700 rounded hover:bg-gray-400 transition"
-              >
-                Cancel
-              </button>
-              <button
-                onClick={handleAddUrl}
-                className="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600 transition"
-              >
-                Add URL
-              </button>
+      <Dialog open={openPageDialog} onOpenChange={setOpenPageDialog}>
+        <DialogTrigger asChild>
+          <Button
+            variant="outline"
+            onClick={() => {
+              setError("");
+            }}
+          >
+            Add Page
+          </Button>
+        </DialogTrigger>
+        <DialogContent className="sm:max-w-[425px]">
+          <DialogHeader>
+            <DialogTitle>Add Page</DialogTitle>
+            <DialogDescription>
+              Add new page to an existing domain here. Click save when you are
+              done.
+            </DialogDescription>
+          </DialogHeader>
+          <div className="grid gap-4 py-4">
+            <div className="grid grid-cols-3 items-center gap-4">
+              <Label htmlFor="name" className="text-right">
+                Domain
+              </Label>
+              <Select onValueChange={(value) => setSelectedDomainId(value)}>
+                <SelectTrigger className="w-[180px]">
+                  <SelectValue placeholder="Choose Domain" />
+                </SelectTrigger>
+                <SelectContent>
+                  {domains.length > 0 ? (
+                    domains.map((domain) => (
+                      <SelectItem key={domain.id} value={domain.id.toString()}>
+                        {domain.domain}
+                      </SelectItem>
+                    ))
+                  ) : (
+                    <SelectItem key={-1} value={"-1"}>
+                      No Domains Available
+                    </SelectItem>
+                  )}
+                </SelectContent>
+              </Select>
             </div>
           </div>
-        </div>
-      )}
-      {/* Render Domain Cards */}
+
+          <div className="grid gap-4 py-4 ">
+            <div className="grid grid-cols-4 items-center gap-4 ">
+              <Label htmlFor="name" className="text-right">
+                Page URL
+              </Label>
+              <Input
+                id="domainName"
+                placeholder="https://www.example.com/contact"
+                className="col-span-3"
+                onChange={(e) => setNewPage(e.target.value)}
+              />
+            </div>
+          </div>
+          {error && <p className="text-red-500 text-sm mb-1">{error}</p>}
+          <DialogFooter>
+            <Button onClick={handleAddPage} disabled={loadingSubpage}>
+              Save
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
       {domains.map((domain) => (
         <DomainCard
           key={domain.id}
           id={domain.id}
           domain={domain.domain}
           urls={domain.urls}
-          refetchDomains={refetchDomains} // Pass refetch function to DomainCard
+          refetchDomains={refetchDomains}
         />
       ))}
     </div>

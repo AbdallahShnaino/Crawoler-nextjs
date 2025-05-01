@@ -40,7 +40,6 @@ export async function loginUser(
   try {
     const op = await login(username, password);
     const cookieStore = await cookies();
-    console.log(op);
     cookieStore.set("token", op.access_token, {
       secure: process.env.NODE_ENV === "production",
       path: "/",

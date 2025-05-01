@@ -9,6 +9,7 @@ export async function getAssetOCRs(assetId: number, token: string) {
       },
     }
   );
+  console.log("getAssetOCRs response", res);
   if (!res.ok) {
     throw new Error("Failed to fetch ocr results");
   }

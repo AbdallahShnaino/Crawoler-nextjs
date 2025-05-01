@@ -9,6 +9,8 @@ export async function triggerOCR(assetId: number, token: string) {
       },
     }
   );
+  console.log("triggerOCR response", res);
+
   if (!res.ok) {
     throw new Error("Failed to trigger ocr processing for this asset");
   }
@@ -26,6 +28,8 @@ export async function getOCRResult(userId: number, token: string) {
       },
     }
   );
+  console.log("getOCRResult response", res);
+
   if (!res.ok) {
     throw new Error("Failed to fetch OCR results");
   }

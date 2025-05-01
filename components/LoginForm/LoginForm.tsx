@@ -1,7 +1,6 @@
 "use client";
 import { loginUser, LoginUserStatus } from "@/actions/loginUserAction";
-import Link from "next/link";
-import React, { useActionState, useEffect, useState } from "react";
+import React, { useActionState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 
 const initialState: LoginUserStatus = {
@@ -11,60 +10,63 @@ const initialState: LoginUserStatus = {
 };
 
 const LoginForm = () => {
-  const [formState, action] = useActionState(loginUser, initialState);
-  const [loading, setLoading] = useState(false);
+  const [formState, action, isPending] = useActionState(
+    loginUser,
+    initialState
+  );
   const router = useRouter();
 
   useEffect(() => {
     if (formState.success) {
       router.push("/dashboard");
-      setLoading(true);
     }
   }, [formState.success, router]);
 
   return (
     <form
       action={action}
-      className="p-5 w-[90%] sm:w-96 flex flex-col gap-5 bg-[#EEEEEE] rounded-lg shadow-lg"
+      className="bg-white p-6 w-full max-w-md rounded-xl shadow-lg flex flex-col gap-5 border border-[#AFDDFF]"
     >
       <div className="flex flex-col gap-1.5">
-        <label htmlFor="username">Email address</label>
+        <label htmlFor="username" className="text-[#222831] font-medium">
+          Username
+        </label>
         <input
           type="text"
           name="username"
           id="username"
-          className="border-1 border-gray-300 px-1.5 py-1 rounded focus:outline-blue-500 bg-white"
+          className="border border-[#60B5FF] px-3 py-2 rounded-md focus:outline-none focus:ring-2 focus:ring-[#60B5FF]"
           required
         />
       </div>
 
       <div className="flex flex-col gap-1.5">
         <div className="flex justify-between items-center">
-          <label htmlFor="password">Password</label>
-          <Link
-            href={"/forget-password"}
-            className="text-blue-400 hover:underline"
-          >
-            Forget password?
-          </Link>
+          <label htmlFor="password" className="text-[#222831] font-medium">
+            Password
+          </label>
         </div>
         <input
           type="password"
           name="password"
           id="password"
-          className="border-1 border-gray-300 px-1.5 py-1 rounded focus:outline-blue-500 bg-white"
+          className="border border-[#60B5FF] px-3 py-2 rounded-md focus:outline-none focus:ring-2 focus:ring-[#c1def8]"
           required
         />
       </div>
 
       {formState.error && (
-        <p className="text-red-500 text-sm">{formState.error}</p>
+        <p className="text-red-500 text-sm font-medium">{formState.error}</p>
       )}
       <input
-        disabled={loading}
         type="submit"
-        value={loading ? "Loading..." : "Sign in"}
-        className="mt-1.5 bg-[#222831] hover:bg-[#393E46] rounded p-2 text-white cursor-pointer"
+        value={isPending ? "Signing in..." : "Sign in"}
+        disabled={isPending}
+        className={`text-white py-2.5 px-4 rounded-md font-semibold transition-all duration-200 ${
+          isPending
+            ? "bg-[#FF9149] opacity-50 cursor-not-allowed"
+            : "bg-[#FF9149] hover:bg-[#ff7b24] cursor-pointer"
+        }`}
       />
     </form>
   );

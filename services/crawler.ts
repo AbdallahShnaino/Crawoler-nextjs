@@ -1,4 +1,4 @@
-export async function runCrawler(domain: string, token: string) {
+export async function runCrawler(token: string) {
   const res = await fetch(
     `${process.env.NEXT_PUBLIC_API_URL}/api/crawler/crawl-pending`,
     {
@@ -9,6 +9,8 @@ export async function runCrawler(domain: string, token: string) {
       },
     }
   );
+  console.log("runCrawler response", res);
+
   if (!res.ok) {
     throw new Error("Failed to create domain");
   }

@@ -9,6 +9,7 @@ export async function getUrl(domainId: number, urlId: number, token: string) {
       },
     }
   );
+  console.log("getUrl response", res);
 
   if (!res.ok) {
     throw new Error("Failed to fetch urls");
@@ -16,13 +17,9 @@ export async function getUrl(domainId: number, urlId: number, token: string) {
   return res.json();
 }
 
-export async function getUrlAssets(
-  domainId: number,
-  urlId: number,
-  token: string
-) {
+export async function getUrlAssets(urlId: number, token: string) {
   const res = await fetch(
-    `${process.env.NEXT_PUBLIC_API_URL}/api/domains/${domainId}/urls/${urlId}/assets`,
+    `${process.env.NEXT_PUBLIC_API_URL}/api/domains/urls/${urlId}/assets`,
     {
       method: "GET",
       headers: {
@@ -31,10 +28,8 @@ export async function getUrlAssets(
       },
     }
   );
+  console.log("getUrlAssets response", res);
 
-  if (!res.ok) {
-    throw new Error("Failed to get url assets");
-  }
   return res.json();
 }
 
@@ -53,6 +48,7 @@ export async function deleteUrl(
       },
     }
   );
+  console.log("deleteUrl response", res);
 
   if (!res.ok) {
     throw new Error("Failed to delete urls");

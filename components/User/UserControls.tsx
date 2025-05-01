@@ -1,4 +1,3 @@
-// components/UserControls.tsx
 "use client";
 
 import { useAuth } from "@/context/user";
@@ -7,12 +6,11 @@ import { useRouter } from "next/navigation";
 import { toast } from "sonner";
 
 export function UserControls() {
-  const { username } = useAuth(); // Replace with dynamic user data
+  const { username } = useAuth();
   const router = useRouter();
 
   const handleLogout = async () => {
     try {
-      // Call your logout API endpoint
       const response = await fetch("/api/auth/logout", {
         method: "POST",
         credentials: "include",
@@ -20,7 +18,6 @@ export function UserControls() {
 
       if (response.ok) {
         toast.success("Logged out successfully");
-        // Redirect to login page after a brief delay
         setTimeout(() => router.push("/login"), 1000);
       } else {
         throw new Error("Logout failed");

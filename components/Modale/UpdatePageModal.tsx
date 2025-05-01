@@ -75,7 +75,6 @@ export default function UpdatePageModal({
         </DialogHeader>
 
         <div className="flex flex-col sm:flex-row gap-6 py-4">
-          {/* Current Page */}
           <div className="flex flex-col w-full">
             <Label className="text-sm text-muted-foreground mb-1">
               Current Page
@@ -85,7 +84,6 @@ export default function UpdatePageModal({
             </div>
           </div>
 
-          {/* New Page */}
           <div className="flex flex-col w-full">
             <Label htmlFor="newPage" className="mb-1">
               New Page

@@ -1,4 +1,3 @@
-// app/layout.tsx
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import { ToastContainer } from "react-toastify";
@@ -30,8 +29,6 @@ export default function RootLayout({
   domains: React.ReactNode;
   assets: React.ReactNode;
 }>) {
-  // In a real app, this would come from your auth provider
-
   return (
     <html lang="en" className="h-full">
       <body
@@ -44,7 +41,6 @@ export default function RootLayout({
           progressClassName="!bg-gradient-to-r from-[#FF9149] to-[#60B5FF]"
         />
 
-        {/* Header with User Controls */}
         <header className="bg-gradient-to-r from-[#FF9149] to-[#FFAA6B] text-white shadow-sm">
           <div className="container mx-auto px-4 py-4 flex justify-between items-center">
             <div>
@@ -58,7 +54,6 @@ export default function RootLayout({
           </div>
         </header>
 
-        {/* Rest of your layout remains the same */}
         <main className="flex-1 container mx-auto px-4 py-8">
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
             <section

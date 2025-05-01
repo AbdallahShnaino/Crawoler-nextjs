@@ -1,23 +1,14 @@
 @import "tailwindcss";
 @import "tw-animate-css";
-/* 
----break---
 
-*/
 @custom-variant dark (&:is(.dark *));
 /* 
-this is my new colors
 60B5FF
 AFDDFF
 FFECDB
 FF9149
-re design this page
-
 */
-/* 
----break---
 
-*/
 @theme inline {
   --radius-sm: calc(var(--radius) - 4px);
   --radius-md: calc(var(--radius) - 2px);
@@ -55,10 +46,7 @@ re design this page
   --color-sidebar-border: var(--sidebar-border);
   --color-sidebar-ring: var(--sidebar-ring);
 }
-/* 
----break---
 
-*/
 :root {
   --radius: 0.625rem;
   --background: oklch(1 0 0);
@@ -93,10 +81,7 @@ re design this page
   --sidebar-border: oklch(0.922 0 0);
   --sidebar-ring: oklch(0.708 0 0);
 }
-/* 
----break---
 
-*/
 .dark {
   --background: oklch(0.145 0 0);
   --foreground: oklch(0.985 0 0);
@@ -130,10 +115,7 @@ re design this page
   --sidebar-border: oklch(1 0 0 / 10%);
   --sidebar-ring: oklch(0.556 0 0);
 }
-/* 
----break---
 
-*/
 @layer base {
   * {
     @apply border-border outline-ring/50;

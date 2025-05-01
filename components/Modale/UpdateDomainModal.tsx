@@ -73,7 +73,6 @@ export default function UpdateDomainModal({
         </DialogHeader>
 
         <div className="flex flex-col sm:flex-row gap-6 py-4">
-          {/* Current Domain */}
           <div className="flex flex-col w-full">
             <Label className="text-sm text-muted-foreground mb-1">
               Current Domain
@@ -83,7 +82,6 @@ export default function UpdateDomainModal({
             </div>
           </div>
 
-          {/* New Domain */}
           <div className="flex flex-col w-full">
             <Label htmlFor="newDomain" className="mb-1">
               New Domain

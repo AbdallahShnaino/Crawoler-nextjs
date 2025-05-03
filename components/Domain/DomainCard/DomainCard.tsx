@@ -7,7 +7,7 @@ import { useState } from "react";
 import "react-toastify/dist/ReactToastify.css";
 import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
-import { ChevronsUpDown, Delete } from "lucide-react";
+import { ChevronsUpDown, Delete, Videotape } from "lucide-react";
 import {
   Collapsible,
   CollapsibleContent,
@@ -15,6 +15,7 @@ import {
 } from "@/components/ui/collapsible";
 import UpdatePageModal from "@/components/Modale/UpdatePageModal";
 import UpdateDomainModal from "@/components/Modale/UpdateDomainModal";
+import { useRouter } from "next/navigation";
 
 export default function DomainCard({
   id,
@@ -29,6 +30,7 @@ export default function DomainCard({
 }) {
   const { token } = useAuth();
   const [isOpen, setIsOpen] = useState(false);
+  const router = useRouter(); // Initialize the router
 
   const handleDeleteDomain = async () => {
     try {
@@ -40,6 +42,9 @@ export default function DomainCard({
     }
   };
 
+  const handleShowAssets = async (pageId: number) => {
+    router.push(`?pageId=${pageId}`);
+  };
   const handleDeletePageUrl = async (pageId: number) => {
     try {
       await deleteUrl(id, pageId, token!);
@@ -102,6 +107,16 @@ export default function DomainCard({
                 >
                   <Delete className="h-4 w-4" />
                 </Button>
+                {page.status === "completed" && (
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    onClick={() => handleShowAssets(page.id)}
+                  >
+                    <Videotape className="h-4 w-4" />
+                  </Button>
+                )}
+
                 {token && (
                   <UpdatePageModal
                     domainId={id}

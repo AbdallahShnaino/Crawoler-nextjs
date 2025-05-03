@@ -4,6 +4,7 @@ const protectedRoutes = ["/"];
 
 export async function middleware(request: NextRequest) {
   const token = request.cookies.get("token")?.value;
+
   if (
     request.nextUrl.pathname === "/login" ||
     request.nextUrl.pathname === "/signup"
@@ -18,6 +19,10 @@ export async function middleware(request: NextRequest) {
     request.nextUrl.pathname.startsWith("/api/")
   ) {
     return NextResponse.next();
+  }
+
+  if (request.nextUrl.pathname === "/") {
+    return NextResponse.redirect(new URL("/dashboard", request.url));
   }
 
   const isProtected = protectedRoutes.some((route) =>

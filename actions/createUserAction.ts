@@ -72,6 +72,6 @@ async function signup(username: string, password: string) {
 
   const data = await res.json();
 
-  if (!res.ok) throw new Error(data.error || "Signup failed");
+  if (!res.ok) throw new Error(data.error || "(server) Signup failed");
   return data;
 }

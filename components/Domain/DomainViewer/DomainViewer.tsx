@@ -27,6 +27,7 @@ import {
 } from "@/components/ui/select";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { runCrawler } from "@/services/crawler";
 interface IProps {
   initialDomains: Domain[] | undefined;
 }
@@ -92,10 +93,26 @@ export default function AssetViewer({ initialDomains }: IProps) {
       toast("Failed to add domain. Please try again.");
     }
   };
+  const handleRunCrawler = async () => {
+    if (!token) {
+      toast.error("You must be logged in to run the crawler.");
+      return;
+    }
 
+    try {
+      console.log("Running crawler with token:", token); // Debugging
+      await runCrawler(token);
+      toast.success("Crawler started successfully!");
+    } catch (error) {
+      console.error("Error running crawler:", error); // Debugging
+      toast.error(
+        error instanceof Error ? error.message : "Failed to run the crawler"
+      );
+    }
+  };
   const handleAddPage = async () => {
     const pageRegex =
-      /^https?:\/\/(?:www\.)?[a-zA-Z0-9-]+\.[a-zA-Z]{2,}(\/[\w\-./]*)?$/;
+      /^https?:\/\/(?:www\.)?[a-zA-Z0-9-]+\.[a-zA-Z]{2,}(\/[\w\-./]*)?(\?[\w\-=&%]*)?$/;
 
     if (!pageRegex.test(newPage) && Number(selectedDomainId) != -1) {
       setError("Invalid domain format.");
@@ -122,6 +139,7 @@ export default function AssetViewer({ initialDomains }: IProps) {
   return (
     <div className="p-6 max-w-5xl mx-auto space-y-6">
       <h1 className="text-3xl font-bold mb-8">Domain Dashboard</h1>
+      <Button onClick={handleRunCrawler}>Run Crawler</Button>
       <Dialog open={openDomainDialog} onOpenChange={setOpenDomainDialog}>
         <DialogTrigger asChild>
           <Button

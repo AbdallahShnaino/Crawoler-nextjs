@@ -19,7 +19,7 @@ export async function getUrl(domainId: number, urlId: number, token: string) {
 
 export async function getUrlAssets(urlId: number, token: string) {
   const res = await fetch(
-    `${process.env.NEXT_PUBLIC_API_URL}/api/domains/urls/${urlId}/assets`,
+    `${process.env.NEXT_PUBLIC_API_URL}/api/urls/${urlId}/assets`,
     {
       method: "GET",
       headers: {
@@ -28,6 +28,9 @@ export async function getUrlAssets(urlId: number, token: string) {
       },
     }
   );
+  if (res.status === 403) {
+    throw new Error("FORBIDDEN");
+  }
   console.log("getUrlAssets response", res);
 
   return res.json();

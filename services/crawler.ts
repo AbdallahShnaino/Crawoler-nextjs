@@ -1,4 +1,6 @@
 export async function runCrawler(token: string) {
+  console.log("runCrawler is running");
+
   const res = await fetch(
     `${process.env.NEXT_PUBLIC_API_URL}/api/crawler/crawl-pending`,
     {

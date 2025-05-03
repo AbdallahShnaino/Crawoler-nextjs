@@ -27,20 +27,16 @@ export interface Url {
   url: string;
   status: string;
 }
-export interface DomainAssets {
-  id: number;
-  domain: string;
-  urls: UrlWithAssets[];
-}
-
-export interface UrlWithAssets {
-  id: number;
-  url: string;
-  assets: Asset[];
-}
 
 export interface Asset {
-  id: number;
+  assetId: number;
+  pageId: number;
+  assetUrl: string;
   type: string;
   status: string;
+  ocrResult: OcrResult[];
+}
+export interface OcrResult {
+  content: string;
+  confidence: number;
 }

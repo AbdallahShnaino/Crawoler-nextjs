@@ -95,8 +95,12 @@ export default function DomainCard({
               key={page.id}
               className="rounded-md border px-3 py-2 font-mono text-sm shadow-sm flex flex-col gap-2"
             >
-              <div className="flex justify-between items-center">
-                <span className="truncate">{page.url}</span>
+              <div className="flex justify-between items-center group relative">
+                <span className="truncate max-w-[150px]">{page.url}</span>
+                <div className="absolute left-0 bottom-full mb-1 hidden w-max rounded bg-white px-2 py-1 text-xs text-black shadow group-hover:block z-10">
+                  {page.url}
+                </div>
+
                 <span className="text-xs text-gray-500">{page.status}</span>
               </div>
               <div className="flex items-center justify-between">

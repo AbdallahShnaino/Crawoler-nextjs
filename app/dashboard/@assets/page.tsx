@@ -65,13 +65,13 @@ export default async function AssetsDashboard({
 
   if (pageId === undefined) {
     return (
-      <div className="flex flex-col items-center justify-start h-screen mt-20">
+      <div className="flex flex-col items-center justify-start h-screen mt-20 text-sm	">
         <h1 className="text-4xl font-bold text-gray-700 mb-4">🔒 Locked</h1>
-        <p className="text-lg text-gray-500 flex items-center gap-1">
+        <p className="text-sm text-gray-500 flex items-center gap-1">
           Click on
           <Videotape /> to set its assets and unlock the assets dashboard.
         </p>
-        <p className="text-lg text-gray-500 flex items-center gap-1">
+        <p className="text-sm text-gray-500 flex items-center gap-1">
           If you see <Videotape />, don’t worry — just wait until the page
           crawling job is completed.
         </p>

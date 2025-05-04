@@ -36,7 +36,7 @@ export default async function RootLayout({
           >
             <div className="flex items-center mb-4">
               <Link color="#FF9149" className="mx-3" />
-              <h2 id="domains-heading" className="text-xl font-semibold">
+              <h2 id="domains-heading" className="text-base font-semibold">
                 Domains
               </h2>
             </div>
@@ -50,7 +50,7 @@ export default async function RootLayout({
           >
             <div className="flex items-center mb-4">
               <Voicemail color="#60B5FF" className="mx-3" />
-              <h2 id="assets-heading" className="text-xl font-semibold">
+              <h2 id="assets-heading" className="text-base font-semibold">
                 Assets
               </h2>
             </div>

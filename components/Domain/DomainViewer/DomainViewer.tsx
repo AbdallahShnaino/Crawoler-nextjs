@@ -138,11 +138,14 @@ export default function AssetViewer({ initialDomains }: IProps) {
 
   return (
     <div className="p-6 max-w-5xl mx-auto space-y-6">
-      <h1 className="text-3xl font-bold mb-8">Domain Dashboard</h1>
-      <Button onClick={handleRunCrawler}>Run Crawler</Button>
+      <h1 className="text-2xl font-bold mb-8">Domain Dashboard</h1>
+      <Button className="px-2 py-1 text-sm" onClick={handleRunCrawler}>
+        Run Crawler
+      </Button>
       <Dialog open={openDomainDialog} onOpenChange={setOpenDomainDialog}>
         <DialogTrigger asChild>
           <Button
+            className="px-2 py-1 text-sm"
             variant="outline"
             onClick={() => {
               setError("");
@@ -183,6 +186,7 @@ export default function AssetViewer({ initialDomains }: IProps) {
       <Dialog open={openPageDialog} onOpenChange={setOpenPageDialog}>
         <DialogTrigger asChild>
           <Button
+            className="px-2 py-1 text-sm"
             variant="outline"
             onClick={() => {
               setError("");

@@ -204,28 +204,33 @@ export default function AssetViewer({ initialDomains }: IProps) {
             </DialogDescription>
           </DialogHeader>
           <div className="grid gap-4 py-4">
-            <div className="grid grid-cols-3 items-center gap-4">
+            <div className="grid grid-cols-4 items-center gap-4">
               <Label htmlFor="name" className="text-right">
                 Domain
               </Label>
-              <Select onValueChange={(value) => setSelectedDomainId(value)}>
-                <SelectTrigger className="w-[180px]">
-                  <SelectValue placeholder="Choose Domain" />
-                </SelectTrigger>
-                <SelectContent>
-                  {domains.length > 0 ? (
-                    domains.map((domain) => (
-                      <SelectItem key={domain.id} value={domain.id.toString()}>
-                        {domain.domain}
+              <div className="col-span-3">
+                <Select onValueChange={(value) => setSelectedDomainId(value)}>
+                  <SelectTrigger className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#bcbcbc] focus:border-[#bcbcbc]">
+                    <SelectValue placeholder="Choose Domain" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {domains.length > 0 ? (
+                      domains.map((domain) => (
+                        <SelectItem
+                          key={domain.id}
+                          value={domain.id.toString()}
+                        >
+                          {domain.domain}
+                        </SelectItem>
+                      ))
+                    ) : (
+                      <SelectItem key={-1} value={"-1"}>
+                        No Domains Available
                       </SelectItem>
-                    ))
-                  ) : (
-                    <SelectItem key={-1} value={"-1"}>
-                      No Domains Available
-                    </SelectItem>
-                  )}
-                </SelectContent>
-              </Select>
+                    )}
+                  </SelectContent>
+                </Select>
+              </div>
             </div>
           </div>
 

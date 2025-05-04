@@ -71,9 +71,9 @@ export default async function AssetsDashboard({
           Click on
           <Videotape /> to set its assets and unlock the assets dashboard.
         </p>
-        <p className="text-sm text-gray-500 flex items-center gap-1">
-          If you see <Videotape />, don’t worry — just wait until the page
-          crawling job is completed.
+        <p className="text-xs text-gray-500 flex items-center gap-1">
+          If you don&apos;t see <Videotape size={22} /> icon, don&apos;t worry —
+          just wait until the page crawling job is completed.
         </p>
       </div>
     );

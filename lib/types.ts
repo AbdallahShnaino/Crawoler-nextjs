@@ -40,3 +40,15 @@ export interface OcrResult {
   content: string;
   confidence: number;
 }
+
+export interface UrlWithAssets {
+  id: number;
+  url: string;
+  assets: UrlAsset[];
+}
+
+export interface UrlAsset {
+  id: number;
+  type: string;
+  status: string;
+}

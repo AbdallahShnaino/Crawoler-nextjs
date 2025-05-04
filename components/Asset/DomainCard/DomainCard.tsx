@@ -1,12 +1,12 @@
 "use client";
 import { useAuth } from "@/context/user";
-import { UrlWithAssets } from "@/lib/types";
 import { deleteDomain, updateDomain } from "@/services/domain";
 import { createDomainUrl, deleteUrl, updateUrl } from "@/services/url";
 import { useState, useRef, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
+import { UrlWithAssets } from "@/lib/types";
 
 export default function AssetCard({
   id,

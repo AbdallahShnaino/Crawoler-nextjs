@@ -9,6 +9,7 @@ export default async function AssetsDashboard({
 }: {
   searchParams: { pageId?: string };
 }) {
+  /* 
   const mockAssets: Asset[] = [
     {
       assetId: 1,
@@ -54,11 +55,11 @@ export default async function AssetsDashboard({
       ocrResult: [{ content: "Loading...", confidence: 0.0 }],
     },
   ];
-
-  /* 
+  
+  */
   const { token } = await requireAuth();
   const pageId = Number(searchParams.pageId) || undefined;
-  const assets: UrlAsset =
+  const assets: Asset[] =
     pageId !== undefined ? await getUrlAssets(pageId, token) : null;
   console.log(">>>> assets", assets);
 
@@ -77,7 +78,5 @@ export default async function AssetsDashboard({
       </div>
     );
   }
-
-*/
-  return <AssetsViewer assets={mockAssets} />;
+  return <AssetsViewer assets={assets} />;
 }

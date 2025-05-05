@@ -34,7 +34,7 @@ export interface Asset {
   assetUrl: string;
   type: string;
   status: string;
-  ocrResult: OcrResult[];
+  ocrResult: OcrResult;
 }
 export interface OcrResult {
   content: string;

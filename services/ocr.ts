@@ -1,22 +1,3 @@
-export async function triggerOCR(assetId: number, token: string) {
-  const res = await fetch(
-    `${process.env.NEXT_PUBLIC_API_URL}/api/ocr/assets/${assetId}/process`,
-    {
-      method: "GET",
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${token}`,
-      },
-    }
-  );
-  console.log("triggerOCR response", res);
-
-  if (!res.ok) {
-    throw new Error("Failed to trigger ocr processing for this asset");
-  }
-  return res.json();
-}
-
 export async function getOCRResult(userId: number, token: string) {
   const res = await fetch(
     `${process.env.NEXT_PUBLIC_API_URL}/api/ocr/assets/${userId}/results`,
@@ -28,10 +9,27 @@ export async function getOCRResult(userId: number, token: string) {
       },
     }
   );
-  console.log("getOCRResult response", res);
 
   if (!res.ok) {
     throw new Error("Failed to fetch OCR results");
+  }
+  return res.json();
+}
+export async function triggerOcr(assetId: string, token: string) {
+  const res = await fetch(
+    `${process.env.NEXT_PUBLIC_API_URL}/api/ocr/assets/1/process`,
+    {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`,
+      },
+      body: JSON.stringify({ asset_id: assetId }),
+    }
+  );
+
+  if (!res.ok) {
+    throw new Error("Failed to create domain");
   }
   return res.json();
 }

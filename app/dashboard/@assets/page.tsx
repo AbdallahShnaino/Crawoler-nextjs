@@ -7,7 +7,7 @@ import { Videotape } from "lucide-react";
 export default async function AssetsDashboard({
   searchParams,
 }: {
-  searchParams: { pageId?: string };
+  searchParams: { pageId?: string; domainId?: string };
 }) {
   /* 
   const mockAssets: Asset[] = [
@@ -59,9 +59,12 @@ export default async function AssetsDashboard({
   */
   const { token } = await requireAuth();
   const pageId = Number(searchParams.pageId) || undefined;
-  const assets: Asset[] =
-    pageId !== undefined ? await getUrlAssets(pageId, token) : null;
-  console.log(">>>> assets", assets);
+  const domainId = Number(searchParams.domainId) || undefined;
+
+  const assets: Asset[] | null =
+    pageId !== undefined && domainId !== undefined
+      ? await getUrlAssets(domainId, pageId, token)
+      : null;
 
   if (pageId === undefined) {
     return (
@@ -78,5 +81,5 @@ export default async function AssetsDashboard({
       </div>
     );
   }
-  return <AssetsViewer assets={assets} />;
+  return <AssetsViewer assets={assets ?? []} token={token} />;
 }

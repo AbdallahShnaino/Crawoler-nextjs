@@ -11,7 +11,6 @@ export async function getDomain(domainId: number, token: string) {
       },
     }
   );
-  console.log("getDomain response", res);
   if (!res.ok) {
     throw new Error("Failed to fetch domain data");
   }
@@ -26,7 +25,6 @@ export async function getDomains(token: string) {
       Authorization: `Bearer ${token}`,
     },
   });
-  console.log("getDomains response", res);
 
   if (!res.ok) {
     throw new Error("Failed to fetch domains");
@@ -43,7 +41,6 @@ export async function createDomain(domain: string, token: string) {
     },
     body: JSON.stringify({ domain: domain }),
   });
-  console.log("createDomain response", res);
 
   if (!res.ok) {
     throw new Error("Failed to create domain");
@@ -82,7 +79,6 @@ export async function deleteDomain(domainId: number, token: string) {
       },
     }
   );
-  console.log("deleteDomain response", res);
 
   if (!res.ok) {
     throw new Error("Failed to delete domains");

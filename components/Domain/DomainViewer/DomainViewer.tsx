@@ -100,7 +100,6 @@ export default function AssetViewer({ initialDomains }: IProps) {
     }
 
     try {
-      console.log("Running crawler with token:", token); // Debugging
       await runCrawler(token);
       toast.success("Crawler started successfully!");
     } catch (error) {

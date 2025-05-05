@@ -15,7 +15,7 @@ export default async function DomainDashboard() {
           const urls: Url[] = await getDomainUrls(domain.id, token);
           return { id: domain.id, domain: domain.domain, urls: urls };
         } catch (error) {
-          console.log(
+          console.error(
             "DomainDashboard error while fetching domain urls ",
             error
           );

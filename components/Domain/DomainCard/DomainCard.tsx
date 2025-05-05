@@ -42,8 +42,8 @@ export default function DomainCard({
     }
   };
 
-  const handleShowAssets = async (pageId: number) => {
-    router.push(`?pageId=${pageId}`);
+  const handleShowAssets = async (domainId: number, pageId: number) => {
+    router.push(`?pageId=${pageId}&domainId=${domainId}`);
   };
   const handleDeletePageUrl = async (pageId: number) => {
     try {
@@ -115,7 +115,7 @@ export default function DomainCard({
                   <Button
                     variant="ghost"
                     size="sm"
-                    onClick={() => handleShowAssets(page.id)}
+                    onClick={() => handleShowAssets(id, page.id)}
                   >
                     <Videotape className="h-4 w-4" />
                   </Button>

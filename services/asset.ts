@@ -1,6 +1,7 @@
 export async function getAssetOCRs(assetId: number, token: string) {
   const res = await fetch(
-    `${process.env.NEXT_PUBLIC_API_URL}/api/assets/${assetId}/ocr-results`,
+    // /api/assets/1/ocr-results
+    `${process.env.NEXT_PUBLIC_API_URL}/api/ocr/assets/${assetId}/results`,
     {
       method: "GET",
       headers: {
@@ -9,9 +10,6 @@ export async function getAssetOCRs(assetId: number, token: string) {
       },
     }
   );
-  console.log("getAssetOCRs response", res);
-  if (!res.ok) {
-    throw new Error("Failed to fetch ocr results");
-  }
+
   return res.json();
 }

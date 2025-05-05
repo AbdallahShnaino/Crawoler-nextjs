@@ -1,3 +1,6 @@
+import { Asset } from "@/lib/types";
+import { getAssetOCRs } from "./asset";
+
 export async function getUrl(domainId: number, urlId: number, token: string) {
   const res = await fetch(
     `${process.env.NEXT_PUBLIC_API_URL}/api/domains/${domainId}/urls/${urlId}`,
@@ -9,7 +12,6 @@ export async function getUrl(domainId: number, urlId: number, token: string) {
       },
     }
   );
-  console.log("getUrl response", res);
 
   if (!res.ok) {
     throw new Error("Failed to fetch urls");
@@ -17,9 +19,13 @@ export async function getUrl(domainId: number, urlId: number, token: string) {
   return res.json();
 }
 
-export async function getUrlAssets(urlId: number, token: string) {
+export async function getUrlAssets(
+  domainId: number,
+  urlId: number,
+  token: string
+) {
   const res = await fetch(
-    `${process.env.NEXT_PUBLIC_API_URL}/api/urls/${urlId}/assets`,
+    `${process.env.NEXT_PUBLIC_API_URL}/api/urls/domains/${domainId}/urls/${urlId}/assets`,
     {
       method: "GET",
       headers: {
@@ -28,12 +34,42 @@ export async function getUrlAssets(urlId: number, token: string) {
       },
     }
   );
+
   if (res.status === 403) {
     throw new Error("FORBIDDEN");
   }
-  console.log("getUrlAssets response", res);
+  if (res.status === 403) {
+    throw new Error("FORBIDDEN");
+  }
 
-  return res.json();
+  const data: Array<{
+    id: number;
+    url: string;
+    asset_type: string;
+    status: string;
+  }> = await res.json();
+  const mappedAssets: Asset[] = await Promise.all(
+    data.map(async (item) => {
+      const ocrResult = await getAssetOCRs(item.id, token);
+      return {
+        assetId: item.id,
+        pageId: urlId,
+        assetUrl: item.url,
+        type: item.asset_type,
+        status: item.status,
+        ocrResult: !ocrResult.ocr_result
+          ? {}
+          : {
+              content: ocrResult.ocr_result.content,
+              confidence: Math.round(
+                Number(ocrResult.ocr_result.confidence) * 100
+              ),
+            },
+      } as Asset;
+    })
+  );
+
+  return mappedAssets;
 }
 
 export async function deleteUrl(
@@ -51,7 +87,6 @@ export async function deleteUrl(
       },
     }
   );
-  console.log("deleteUrl response", res);
 
   if (!res.ok) {
     throw new Error("Failed to delete urls");

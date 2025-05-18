@@ -70,7 +70,8 @@ export default function AssetViewer({ initialDomains }: IProps) {
       }
       setLoadingSubpage(true);
 
-      const domainRegex = /^[a-zA-Z0-9-]+\.[a-zA-Z]{2,}$/;
+      const domainRegex =
+        /^(?:[a-z0-9](?:[a-z0-9-]{0,61}[a-z0-9])?\.)+[a-z0-9][a-z0-9-]{0,61}[a-z0-9]$/i;
       if (!domainRegex.test(newDomain)) {
         setError("Invalid domain format.");
         setLoadingSubpage(false);
@@ -111,8 +112,7 @@ export default function AssetViewer({ initialDomains }: IProps) {
   };
   const handleAddPage = async () => {
     const pageRegex =
-      /^https?:\/\/(?:www\.)?[a-zA-Z0-9-]+\.[a-zA-Z]{2,}(\/[\w\-./]*)?(\?[\w\-=&%]*)?$/;
-
+      /^https?:\/\/(?:www\.)?(?:[a-z0-9](?:[a-z0-9-]{0,61}[a-z0-9])?\.)+[a-z0-9][a-z0-9-]{0,61}[a-z0-9](?:\/[\w\-.:;=?&%]*)*$/i;
     if (!pageRegex.test(newPage) && Number(selectedDomainId) != -1) {
       setError("Invalid domain format.");
       setLoadingSubpage(false);
@@ -167,7 +167,7 @@ export default function AssetViewer({ initialDomains }: IProps) {
               </Label>
               <Input
                 id="domainName"
-                placeholder="example.com"
+                placeholder="google.com "
                 className="col-span-3"
                 onChange={(e) => setNewDomain(e.target.value)}
               />
@@ -240,7 +240,7 @@ export default function AssetViewer({ initialDomains }: IProps) {
               </Label>
               <Input
                 id="domainName"
-                placeholder="https://www.example.com/contact"
+                placeholder="https://www.google.com/images"
                 className="col-span-3"
                 onChange={(e) => setNewPage(e.target.value)}
               />

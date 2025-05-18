@@ -16,7 +16,12 @@ import { Input } from "@/components/ui/input";
 import { Pencil } from "lucide-react";
 import { updateDomain } from "@/services/domain";
 import { toast } from "sonner";
-
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
 interface IProps {
   token: string;
   domain: string;
@@ -52,16 +57,28 @@ export default function UpdateDomainModal({
   return (
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
-        <Button
-          variant="ghost"
-          size="sm"
-          onClick={() => {
-            setOpen(true);
-            setError("");
-          }}
-        >
-          <Pencil className="h-4 w-4" />
-        </Button>
+        <TooltipProvider>
+          <Tooltip>
+            <TooltipTrigger asChild>
+              <DialogTrigger asChild>
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  onClick={() => {
+                    setOpen(true);
+                    setError("");
+                  }}
+                >
+                  <Pencil className="h-4 w-4" />
+                  <span className="sr-only">Edit Domain</span>
+                </Button>
+              </DialogTrigger>
+            </TooltipTrigger>
+            <TooltipContent>
+              <p>Update Domain</p>
+            </TooltipContent>
+          </Tooltip>
+        </TooltipProvider>
       </DialogTrigger>
 
       <DialogContent className="sm:max-w-xl">

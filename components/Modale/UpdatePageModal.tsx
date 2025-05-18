@@ -16,6 +16,12 @@ import { Input } from "@/components/ui/input";
 import { Pencil } from "lucide-react";
 import { toast } from "sonner";
 import { updateUrl } from "@/services/url";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "../ui/tooltip";
 
 interface IProps {
   urlId: number;
@@ -54,16 +60,28 @@ export default function UpdatePageModal({
   return (
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
-        <Button
-          variant="ghost"
-          size="sm"
-          onClick={() => {
-            setOpen(true);
-            setError("");
-          }}
-        >
-          <Pencil className="h-4 w-4" />
-        </Button>
+        <TooltipProvider>
+          <Tooltip>
+            <TooltipTrigger asChild>
+              <DialogTrigger asChild>
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  onClick={() => {
+                    setOpen(true);
+                    setError("");
+                  }}
+                >
+                  <Pencil className="h-4 w-4" />
+                  <span className="sr-only">Update Page</span>
+                </Button>
+              </DialogTrigger>
+            </TooltipTrigger>
+            <TooltipContent>
+              <p>Update Page</p>
+            </TooltipContent>
+          </Tooltip>
+        </TooltipProvider>
       </DialogTrigger>
 
       <DialogContent className="sm:max-w-xl">

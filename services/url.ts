@@ -12,7 +12,6 @@ export async function getUrl(domainId: number, urlId: number, token: string) {
       },
     }
   );
-
   if (!res.ok) {
     throw new Error("Failed to fetch urls");
   }
@@ -133,7 +132,6 @@ export async function getDomainUrls(domainId: number, token: string) {
   if (!res.ok) {
     throw new Error("Failed to fetch urls");
   }
-
   return res.json();
 }
 

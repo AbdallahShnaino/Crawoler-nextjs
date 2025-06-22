@@ -3,6 +3,7 @@ import { requireAuth } from "@/context/auth";
 import { Domain, Url } from "@/lib/types";
 import { getDomains } from "@/services/domain";
 import { getDomainUrls } from "@/services/url";
+import { console } from "inspector";
 
 export default async function DomainDashboard() {
   const { token } = await requireAuth();
@@ -13,7 +14,11 @@ export default async function DomainDashboard() {
       domains.map(async (domain: Domain) => {
         try {
           const urls: Url[] = await getDomainUrls(domain.id, token);
-          return { id: domain.id, domain: domain.domain, urls: urls };
+          return {
+            id: domain.id,
+            domain: domain.domain,
+            urls: urls,
+          };
         } catch (error) {
           console.error(
             "DomainDashboard error while fetching domain urls ",

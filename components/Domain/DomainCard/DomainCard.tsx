@@ -7,7 +7,7 @@ import { useState } from "react";
 import "react-toastify/dist/ReactToastify.css";
 import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
-import { ChevronsUpDown, Trash2, Videotape } from "lucide-react";
+import { ChevronsUpDown, Trash2, Videotape, FolderPlus } from "lucide-react";
 import {
   Collapsible,
   CollapsibleContent,
@@ -22,7 +22,19 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from "@/components/ui/tooltip"; // Adjust the path if necessary
+import { Label } from "@/components/ui/label";
+import { Input } from "@/components/ui/input";
 
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog";
+import { createAsset } from "@/services/asset";
 export default function DomainCard({
   id,
   domain,
@@ -37,6 +49,11 @@ export default function DomainCard({
   const { token } = useAuth();
   const [isOpen, setIsOpen] = useState(false);
   const router = useRouter(); // Initialize the router
+  const [error, setError] = useState("");
+  const [openAddAssetDialog, setOpenAddAssetDialog] = useState(false);
+  const [newAsset, setNewAsset] = useState("");
+  const [loadingSubpage, setLoadingSubpage] = useState(false);
+  const [pageId, setPageId] = useState(0);
 
   const handleDeleteDomain = async () => {
     try {
@@ -51,6 +68,7 @@ export default function DomainCard({
   const handleShowAssets = async (domainId: number, pageId: number) => {
     router.push(`?pageId=${pageId}&domainId=${domainId}`);
   };
+
   const handleDeletePageUrl = async (pageId: number) => {
     try {
       await deleteUrl(id, pageId, token!);
@@ -60,7 +78,39 @@ export default function DomainCard({
       toast(error instanceof Error ? error.message : "Failed to delete page");
     }
   };
+  const handleAddNewAsset = async () => {
+    try {
+      if (!token) {
+        return;
+      }
+      setLoadingSubpage(true);
+      setError("");
+      const assetRegex =
+        /^(https?:\/\/)[\w\-]+(\.[\w\-]+)+([\/\w\-._~:?#[\]@!$&'()*+,;=]*)\.(jpg|jpeg|png|gif|bmp|webp|svg|pdf)$/i;
 
+      if (!assetRegex.test(newAsset)) {
+        setError("Invalid URL asset format.");
+        setLoadingSubpage(false);
+        return;
+      }
+
+      const op = await createAsset(newAsset, pageId, token);
+      if (op.id) {
+        toast("Asset has been created.");
+        setOpenAddAssetDialog(false);
+        setLoadingSubpage(false);
+      } else {
+        toast("Failed to add new asset. Please try again.");
+      }
+      setLoadingSubpage(false);
+      setNewAsset("");
+      setPageId(0);
+      setError("");
+      await refetchDomains();
+    } catch {
+      toast("Failed to add domain. Please try again.");
+    }
+  };
   return (
     <Collapsible
       open={isOpen}
@@ -126,6 +176,62 @@ export default function DomainCard({
                 >
                   <Trash2 className="h-4 w-4" />
                 </Button>
+
+                <Dialog
+                  open={openAddAssetDialog}
+                  onOpenChange={setOpenAddAssetDialog}
+                >
+                  <TooltipProvider>
+                    <Tooltip>
+                      <TooltipTrigger asChild>
+                        <DialogTrigger asChild>
+                          <Button variant="ghost" size="sm">
+                            <FolderPlus className="h-4 w-4" />
+                          </Button>
+                        </DialogTrigger>
+                      </TooltipTrigger>
+                      <TooltipContent>
+                        <p>Click to add asset on this page</p>
+                      </TooltipContent>
+                    </Tooltip>
+                  </TooltipProvider>
+                  <DialogContent className="sm:max-w-[425px]">
+                    <DialogHeader>
+                      <DialogTitle>Add Asset</DialogTitle>
+                      <DialogDescription>
+                        Add new assets to a certain web page here. Click save
+                        when you are done.
+                      </DialogDescription>
+                    </DialogHeader>
+                    <div className="grid gap-4 py-4">
+                      <div className="grid grid-cols-4 items-center gap-4">
+                        <Label htmlFor="name" className="text-right">
+                          Asset URL
+                        </Label>
+                        <Input
+                          id="domainName"
+                          placeholder="Please add an image or PDF link"
+                          className="col-span-3"
+                          onChange={(e) => {
+                            setPageId(page.id);
+                            setNewAsset(e.target.value);
+                          }}
+                        />
+                      </div>
+                    </div>
+                    {error && (
+                      <p className="text-red-500 text-sm mb-1">{error}</p>
+                    )}
+                    <DialogFooter>
+                      <Button
+                        onClick={handleAddNewAsset}
+                        disabled={loadingSubpage}
+                      >
+                        Save
+                      </Button>
+                    </DialogFooter>
+                  </DialogContent>
+                </Dialog>
 
                 {page.status === "completed" && (
                   <TooltipProvider>

@@ -2,13 +2,14 @@
 
 import { Domain, Url } from "@/lib/types";
 import DomainCard from "../DomainCard/DomainCard";
-import { useState } from "react";
 import { useAuth } from "@/context/user";
 import { createDomain, getDomains } from "@/services/domain";
 import { createDomainUrl, getDomainUrls } from "@/services/url";
 import { toast } from "sonner";
 import "react-toastify/dist/ReactToastify.css";
 import { Button } from "@/components/ui/button";
+import React, { useState } from "react";
+
 import {
   Dialog,
   DialogContent,
@@ -33,6 +34,7 @@ interface IProps {
 }
 
 export default function AssetViewer({ initialDomains }: IProps) {
+  console.log(initialDomains);
   const [domains, setDomains] = useState<Domain[]>(initialDomains || []);
   const { token } = useAuth();
   const [error, setError] = useState("");
@@ -62,7 +64,6 @@ export default function AssetViewer({ initialDomains }: IProps) {
       setDomains(domainsList);
     } catch {}
   };
-
   const handleAddUrl = async () => {
     try {
       if (!token) {

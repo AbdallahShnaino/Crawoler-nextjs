@@ -26,6 +26,7 @@ export interface Url {
   id: number;
   url: string;
   status: string;
+  page_content: string;
 }
 
 export interface Asset {

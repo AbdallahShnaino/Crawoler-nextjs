@@ -73,7 +73,10 @@ async function login(username: string, password: string) {
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify({ username, password }),
   });
+  console.log("Login res:", res);
+
   const data = await res.json();
+  console.log("Login data:", data);
   if (!res.ok) throw new Error(data.error || "(server) Login failed");
   return data;
 }

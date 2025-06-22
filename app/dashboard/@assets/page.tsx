@@ -7,8 +7,12 @@ import { Videotape } from "lucide-react";
 export default async function AssetsDashboard({
   searchParams,
 }: {
-  searchParams: { pageId?: string; domainId?: string };
+  searchParams: Promise<{ pageId?: string; domainId?: string }>;
 }) {
+  const { pageId: rawPageId, domainId: rawDomainId } = await searchParams;
+  const pageId = Number(rawPageId) || undefined;
+  const domainId = Number(rawDomainId) || undefined;
+
   /* 
   const mockAssets: Asset[] = [
     {
@@ -16,7 +20,8 @@ export default async function AssetsDashboard({
       pageId: 100,
       assetUrl: "https://example.com/page1",
       type: "image",
-      status: "completed",
+      status: "complet
+      ed",
       ocrResult: [
         { content: "Welcome to Example", confidence: 0.96 },
         { content: "Page Header", confidence: 0.93 },
@@ -58,8 +63,6 @@ export default async function AssetsDashboard({
   
   */
   const { token } = await requireAuth();
-  const pageId = Number(searchParams.pageId) || undefined;
-  const domainId = Number(searchParams.domainId) || undefined;
 
   const assets: Asset[] | null =
     pageId !== undefined && domainId !== undefined

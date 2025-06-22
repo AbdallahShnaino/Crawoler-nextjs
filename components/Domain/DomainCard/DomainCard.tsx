@@ -12,7 +12,6 @@ import {
   Trash2,
   Videotape,
   FolderPlus,
-  SunMoon,
   Workflow,
 } from "lucide-react";
 import {

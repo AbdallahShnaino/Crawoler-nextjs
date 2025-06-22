@@ -105,7 +105,6 @@ export default function AssetViewer({ initialDomains }: IProps) {
       await runCrawler(token);
       toast.success("Crawler started successfully!");
     } catch (error) {
-      console.error("Error running crawler:", error); // Debugging
       toast.error(
         error instanceof Error ? error.message : "Failed to run the crawler"
       );

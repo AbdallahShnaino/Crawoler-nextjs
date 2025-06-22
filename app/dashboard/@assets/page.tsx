@@ -12,56 +12,6 @@ export default async function AssetsDashboard({
   const { pageId: rawPageId, domainId: rawDomainId } = await searchParams;
   const pageId = Number(rawPageId) || undefined;
   const domainId = Number(rawDomainId) || undefined;
-
-  /* 
-  const mockAssets: Asset[] = [
-    {
-      assetId: 1,
-      pageId: 100,
-      assetUrl: "https://example.com/page1",
-      type: "image",
-      status: "complet
-      ed",
-      ocrResult: [
-        { content: "Welcome to Example", confidence: 0.96 },
-        { content: "Page Header", confidence: 0.93 },
-      ],
-    },
-    {
-      assetId: 2,
-      pageId: 100,
-      assetUrl: "https://example.com/page1",
-      type: "script",
-      status: "pending",
-      ocrResult: [],
-    },
-    {
-      assetId: 3,
-      pageId: 101,
-      assetUrl: "https://example.com/page2",
-      type: "image",
-      status: "completed",
-      ocrResult: [{ content: "Login Form", confidence: 0.88 }],
-    },
-    {
-      assetId: 4,
-      pageId: 102,
-      assetUrl: "https://example.com/page3",
-      type: "image",
-      status: "failed",
-      ocrResult: [],
-    },
-    {
-      assetId: 5,
-      pageId: 102,
-      assetUrl: "https://example.com/page3",
-      type: "image",
-      status: "processing",
-      ocrResult: [{ content: "Loading...", confidence: 0.0 }],
-    },
-  ];
-  
-  */
   const { token } = await requireAuth();
 
   const assets: Asset[] | null =

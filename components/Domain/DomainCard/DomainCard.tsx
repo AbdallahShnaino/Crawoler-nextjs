@@ -1,13 +1,20 @@
 "use client";
 import { useAuth } from "@/context/user";
 import { Url } from "@/lib/types";
-import { deleteDomain } from "@/services/domain";
+import { addAllPagesOnce, deleteDomain } from "@/services/domain";
 import { deleteUrl } from "@/services/url";
 import { useState } from "react";
 import "react-toastify/dist/ReactToastify.css";
 import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
-import { ChevronsUpDown, Trash2, Videotape, FolderPlus } from "lucide-react";
+import {
+  ChevronsUpDown,
+  Trash2,
+  Videotape,
+  FolderPlus,
+  SunMoon,
+  Workflow,
+} from "lucide-react";
 import {
   Collapsible,
   CollapsibleContent,
@@ -21,7 +28,7 @@ import {
   TooltipContent,
   TooltipProvider,
   TooltipTrigger,
-} from "@/components/ui/tooltip"; // Adjust the path if necessary
+} from "@/components/ui/tooltip";
 import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
 
@@ -48,7 +55,7 @@ export default function DomainCard({
 }) {
   const { token } = useAuth();
   const [isOpen, setIsOpen] = useState(false);
-  const router = useRouter(); // Initialize the router
+  const router = useRouter();
   const [error, setError] = useState("");
   const [openAddAssetDialog, setOpenAddAssetDialog] = useState(false);
   const [newAsset, setNewAsset] = useState("");
@@ -111,15 +118,74 @@ export default function DomainCard({
       toast("Failed to add domain. Please try again.");
     }
   };
+  async function handleAddPagesList(e: React.MouseEvent<HTMLButtonElement>) {
+    e.preventDefault();
+    setError("");
+    setLoadingSubpage(true);
+
+    const fileInput = document.getElementById("picture") as HTMLInputElement;
+    if (!fileInput || !fileInput.files || fileInput.files.length === 0) {
+      setError("Please select a .txt file.");
+      setLoadingSubpage(false);
+      return;
+    }
+
+    const file = fileInput.files[0];
+
+    if (file.type !== "text/plain" && !file.name.endsWith(".txt")) {
+      setError("Only .txt files are allowed.");
+      setLoadingSubpage(false);
+      return;
+    }
+
+    const maxSize = 2 * 1024 * 1024;
+    if (file.size > maxSize) {
+      setError("File size must be less than 2MB.");
+      setLoadingSubpage(false);
+      return;
+    }
+
+    const formData = new FormData();
+    formData.append("file", file);
+
+    try {
+      const res = await addAllPagesOnce(id, formData, token!);
+
+      if (!res || res.error || res.status === false || res.ok === false) {
+        setError(res?.message || "Failed to upload file.");
+        setLoadingSubpage(false);
+        return;
+      }
+
+      toast("Pages added successfully!");
+      setOpenAddAssetDialog(false);
+      setLoadingSubpage(false);
+      setError("");
+      fileInput.value = "";
+      refetchDomains();
+    } catch (err: unknown) {
+      if (err instanceof Error) {
+        setError(
+          err.message ||
+            "Failed to add pages. Please try again or check your file format."
+        );
+      } else {
+        setError(
+          "Failed to add pages. Please try again or check your file format."
+        );
+      }
+      setLoadingSubpage(false);
+    }
+  }
   return (
     <Collapsible
       open={isOpen}
       onOpenChange={setIsOpen}
-      className=" space-y-4 border rounded-lg p-4 shadow-md bg-white"
+      className="space-y-3 border rounded-lg p-4 shadow-md bg-white"
     >
-      <div className=" flex items-center justify-between space-x-4 px-4">
-        <h4 className="text-sm font-semibold">{domain}</h4>
-        <div className="flex space-x-2">
+      <div className="flex items-center justify-between px-4">
+        <h4 className="text-sm font-semibold truncate max-w-[50%]">{domain}</h4>
+        <div className="flex items-center gap-2">
           <TooltipProvider>
             <Tooltip>
               <TooltipTrigger asChild>
@@ -137,7 +203,7 @@ export default function DomainCard({
           </TooltipProvider>
           <Button
             variant="ghost"
-            size="sm"
+            size="icon"
             onClick={() => handleDeleteDomain()}
           >
             <Trash2 />
@@ -152,6 +218,53 @@ export default function DomainCard({
           )}
         </div>
       </div>
+      <Dialog open={openAddAssetDialog} onOpenChange={setOpenAddAssetDialog}>
+        <TooltipProvider>
+          <Tooltip>
+            <TooltipTrigger asChild>
+              <DialogTrigger asChild>
+                <Button variant="ghost" size="sm">
+                  <Workflow size="icon" />
+                </Button>
+              </DialogTrigger>
+            </TooltipTrigger>
+            <TooltipContent>
+              <p>Click to add all pages once</p>
+            </TooltipContent>
+          </Tooltip>
+        </TooltipProvider>
+        <DialogContent className="sm:max-w-[425px]">
+          <DialogHeader>
+            <DialogTitle>Add Pages</DialogTitle>
+            <DialogDescription className="text-sm text-gray-600 leading-relaxed">
+              Add all pages at once to a certain domain. <br />
+              Click <span className="font-medium text-black">Save</span> when
+              you are done.
+              <div className="mt-3">
+                <span className="font-medium text-gray-700">File format:</span>{" "}
+                Upload a plain text file (
+                <code className="text-blue-600">.txt</code>) with one URL per
+                line.
+              </div>
+              <pre className="bg-gray-100 rounded-md p-3 text-xs text-gray-800 mt-2 border border-gray-200">
+                https://example.com/page1{"\n"}
+                https://example.com/page2{"\n"}
+                https://example.com/page3
+              </pre>
+            </DialogDescription>
+          </DialogHeader>
+          <div className="grid w-full max-w-sm items-center gap-3">
+            <Label htmlFor="picture">Picture</Label>
+            <Input id="picture" type="file" />
+          </div>
+          {error && <p className="text-red-500 text-sm mb-1">{error}</p>}
+          <DialogFooter>
+            <Button onClick={handleAddPagesList} disabled={loadingSubpage}>
+              Save
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
 
       <CollapsibleContent className="space-y-3">
         {urls && urls.length > 0 ? (
@@ -171,10 +284,10 @@ export default function DomainCard({
               <div className="flex items-center justify-between">
                 <Button
                   variant="ghost"
-                  size="sm"
+                  size="icon"
                   onClick={() => handleDeletePageUrl(page.id)}
                 >
-                  <Trash2 className="h-4 w-4" />
+                  <Trash2 size="icon" />
                 </Button>
 
                 <Dialog

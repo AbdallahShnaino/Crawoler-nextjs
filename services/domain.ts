@@ -85,3 +85,27 @@ export async function deleteDomain(domainId: number, token: string) {
   }
   return res.json();
 }
+
+export async function addAllPagesOnce(
+  domainId: number,
+  data: FormData,
+  token: string
+) {
+  const res = await fetch(
+    `${process.env.NEXT_PUBLIC_API_URL}/api/domains/${domainId}/bulk-import`,
+    {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`,
+      },
+      body: data,
+    }
+  );
+
+  if (!res.ok) {
+    throw new Error("Failed to add all pages at once");
+  }
+  console.log(res.body);
+  return res.json();
+}

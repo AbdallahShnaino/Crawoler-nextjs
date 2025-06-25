@@ -92,11 +92,10 @@ export async function addAllPagesOnce(
   token: string
 ) {
   const res = await fetch(
-    `${process.env.NEXT_PUBLIC_API_URL}/api/domains/${domainId}/bulk-import`,
+    `${"http://34.132.73.125"}/api/domains/${domainId}/bulk-import`,
     {
       method: "POST",
       headers: {
-        "Content-Type": "application/json",
         Authorization: `Bearer ${token}`,
       },
       body: data,

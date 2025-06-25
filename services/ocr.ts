@@ -17,14 +17,13 @@ export async function getOCRResult(userId: number, token: string) {
 }
 export async function triggerOcr(assetId: string, token: string) {
   const res = await fetch(
-    `${process.env.NEXT_PUBLIC_API_URL}/api/ocr/assets/1/process`,
+    `${process.env.NEXT_PUBLIC_API_URL}/api/ocr/assets/${assetId}/process`,
     {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
         Authorization: `Bearer ${token}`,
       },
-      body: JSON.stringify({ asset_id: assetId }),
     }
   );
 

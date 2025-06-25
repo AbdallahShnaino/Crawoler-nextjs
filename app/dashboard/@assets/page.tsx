@@ -1,23 +1,55 @@
+"use client";
+
+import { useEffect, useState } from "react";
+import { useSearchParams } from "next/navigation";
 import AssetsViewer from "@/components/Asset/AssetViewer/AssetViewer";
-import { requireAuth } from "@/context/auth";
-import { Asset } from "@/lib/types";
 import { getUrlAssets } from "@/services/url";
+import { Asset } from "@/lib/types";
 import { Videotape } from "lucide-react";
+import { useAuth } from "@/context/user";
 
-export default async function AssetsDashboard({
-  searchParams,
-}: {
-  searchParams: Promise<{ pageId?: string; domainId?: string }>;
-}) {
-  const { pageId: rawPageId, domainId: rawDomainId } = await searchParams;
-  const pageId = Number(rawPageId) || undefined;
-  const domainId = Number(rawDomainId) || undefined;
-  const { token } = await requireAuth();
+export default function AssetsDashboardClient() {
+  const searchParams = useSearchParams();
+  const { token } = useAuth();
+  const [assets, setAssets] = useState<Asset[]>([]);
+  const [loading, setLoading] = useState(false);
 
-  const assets: Asset[] | null =
-    pageId !== undefined && domainId !== undefined
-      ? await getUrlAssets(domainId, pageId, token)
-      : null;
+  const pageId = Number(searchParams.get("pageId")) || undefined;
+  const domainId = Number(searchParams.get("domainId")) || undefined;
+
+  const updateAsset = (
+    assetId: number,
+    {
+      status,
+      ocrResult,
+    }: { status: Asset["status"]; ocrResult?: Asset["ocrResult"] }
+  ) => {
+    setAssets((prev) =>
+      prev.map((asset) =>
+        asset.assetId === assetId
+          ? {
+              ...asset,
+              ...(ocrResult && { ocrResult }),
+              status,
+            }
+          : asset
+      )
+    );
+  };
+
+  useEffect(() => {
+    const fetchAssets = async () => {
+      if (loading) return;
+      if (pageId !== undefined && domainId !== undefined && token !== null) {
+        setLoading(true);
+        const data = await getUrlAssets(domainId, pageId, token);
+        setAssets(data);
+        setLoading(false);
+      }
+    };
+
+    fetchAssets();
+  }, [pageId, domainId, token]);
 
   if (pageId === undefined) {
     return (
@@ -34,5 +66,14 @@ export default async function AssetsDashboard({
       </div>
     );
   }
-  return <AssetsViewer assets={assets ?? []} token={token} />;
+
+  if (loading) return <p>Loading assets...</p>;
+
+  return (
+    <AssetsViewer
+      assets={assets ?? []}
+      token={token ?? ""}
+      updateAsset={updateAsset}
+    />
+  );
 }

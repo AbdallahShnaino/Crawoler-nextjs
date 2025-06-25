@@ -34,7 +34,6 @@ interface IProps {
 }
 
 export default function AssetViewer({ initialDomains }: IProps) {
-  console.log(initialDomains);
   const [domains, setDomains] = useState<Domain[]>(initialDomains || []);
   const { token } = useAuth();
   const [error, setError] = useState("");
@@ -144,7 +143,7 @@ export default function AssetViewer({ initialDomains }: IProps) {
       <Dialog open={openDomainDialog} onOpenChange={setOpenDomainDialog}>
         <DialogTrigger asChild>
           <Button
-            className="px-2 py-1 text-sm"
+            className="px-2 py-1 text-sm ml-2"
             variant="outline"
             onClick={() => {
               setError("");
@@ -185,7 +184,7 @@ export default function AssetViewer({ initialDomains }: IProps) {
       <Dialog open={openPageDialog} onOpenChange={setOpenPageDialog}>
         <DialogTrigger asChild>
           <Button
-            className="px-2 py-1 text-sm"
+            className="px-2 py-1 text-sm ml-2"
             variant="outline"
             onClick={() => {
               setError("");

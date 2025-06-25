@@ -56,10 +56,12 @@ export default function DomainCard({
   const [isOpen, setIsOpen] = useState(false);
   const router = useRouter();
   const [error, setError] = useState("");
-  const [openAddAssetDialog, setOpenAddAssetDialog] = useState(false);
+  const [openAddPagesDialog, setOpenAddPagesDialog] = useState(false);
+  const [openAddAssetDialog, setOpenAddAssetDialog] = useState<
+    Record<number, boolean>
+  >({});
   const [newAsset, setNewAsset] = useState("");
   const [loadingSubpage, setLoadingSubpage] = useState(false);
-  const [pageId, setPageId] = useState(0);
 
   const handleDeleteDomain = async () => {
     try {
@@ -72,7 +74,7 @@ export default function DomainCard({
   };
 
   const handleShowAssets = async (domainId: number, pageId: number) => {
-    router.push(`?pageId=${pageId}&domainId=${domainId}`);
+    router.replace(`?pageId=${pageId}&domainId=${domainId}`);
   };
 
   const handleDeletePageUrl = async (pageId: number) => {
@@ -84,7 +86,7 @@ export default function DomainCard({
       toast(error instanceof Error ? error.message : "Failed to delete page");
     }
   };
-  const handleAddNewAsset = async () => {
+  const handleAddNewAsset = async (pageId: number) => {
     try {
       if (!token) {
         return;
@@ -103,14 +105,13 @@ export default function DomainCard({
       const op = await createAsset(newAsset, pageId, token);
       if (op.id) {
         toast("Asset has been created.");
-        setOpenAddAssetDialog(false);
+        setOpenAddAssetDialog((prev) => ({ ...prev, [pageId]: false }));
         setLoadingSubpage(false);
       } else {
         toast("Failed to add new asset. Please try again.");
       }
       setLoadingSubpage(false);
       setNewAsset("");
-      setPageId(0);
       setError("");
       await refetchDomains();
     } catch {
@@ -157,7 +158,7 @@ export default function DomainCard({
       }
 
       toast("Pages added successfully!");
-      setOpenAddAssetDialog(false);
+      setOpenAddPagesDialog(false);
       setLoadingSubpage(false);
       setError("");
       fileInput.value = "";
@@ -217,7 +218,7 @@ export default function DomainCard({
           )}
         </div>
       </div>
-      <Dialog open={openAddAssetDialog} onOpenChange={setOpenAddAssetDialog}>
+      <Dialog open={openAddPagesDialog} onOpenChange={setOpenAddPagesDialog}>
         <TooltipProvider>
           <Tooltip>
             <TooltipTrigger asChild>
@@ -290,8 +291,13 @@ export default function DomainCard({
                 </Button>
 
                 <Dialog
-                  open={openAddAssetDialog}
-                  onOpenChange={setOpenAddAssetDialog}
+                  open={openAddAssetDialog[page.id]}
+                  onOpenChange={(open) =>
+                    setOpenAddAssetDialog((prev) => ({
+                      ...prev,
+                      [page.id]: open,
+                    }))
+                  }
                 >
                   <TooltipProvider>
                     <Tooltip>
@@ -324,10 +330,7 @@ export default function DomainCard({
                           id="domainName"
                           placeholder="Please add an image or PDF link"
                           className="col-span-3"
-                          onChange={(e) => {
-                            setPageId(page.id);
-                            setNewAsset(e.target.value);
-                          }}
+                          onChange={(e) => setNewAsset(e.target.value)}
                         />
                       </div>
                     </div>
@@ -336,7 +339,7 @@ export default function DomainCard({
                     )}
                     <DialogFooter>
                       <Button
-                        onClick={handleAddNewAsset}
+                        onClick={() => handleAddNewAsset(page.id)}
                         disabled={loadingSubpage}
                       >
                         Save

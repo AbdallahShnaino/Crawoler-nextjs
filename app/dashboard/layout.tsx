@@ -8,11 +8,9 @@ export const metadata: Metadata = {
     "Comprehensive dashboard for managing domains and digital assets",
 };
 export default async function RootLayout({
-  children,
   domains,
   assets,
 }: Readonly<{
-  children: React.ReactNode;
   domains: React.ReactNode;
   assets: React.ReactNode;
 }>) {
@@ -57,7 +55,6 @@ export default async function RootLayout({
             <div className="space-y-4">{assets}</div>
           </section>
         </div>
-        {children}
       </main>
       <footer className="bg-gradient-to-r from-[#60B5FF] to-[#8AC8FF] text-white py-4">
         <div className="container mx-auto px-4 text-center">

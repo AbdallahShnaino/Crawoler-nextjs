@@ -17,7 +17,14 @@ export default async function RootLayout({
   return (
     <>
       <header className="bg-gradient-to-r from-[#FF9149] to-[#FFAA6B] text-white shadow-sm">
-        <div className="container mx-auto px-4 py-4 flex justify-between items-center">
+        {/* Logo centered at the top */}
+        <div className="text-center py-2">
+          <span className="text-2xl font-bold tracking-wide">
+            🇵🇸 PalArchiver
+          </span>
+        </div>
+
+        <div className="container mx-auto px-4 py-3 flex justify-between items-center">
           <div>
             <h1 className="text-2xl font-bold">Dashboard</h1>
             <p className="text-sm opacity-90 mt-1">Domain & Asset Management</p>
@@ -25,6 +32,7 @@ export default async function RootLayout({
           <UserControls />
         </div>
       </header>
+
       <main className="flex-1 container mx-auto px-4 py-8">
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
           <section

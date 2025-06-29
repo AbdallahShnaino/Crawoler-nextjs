@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { UserControls } from "@/components/User/UserControls";
 import { Link, Voicemail } from "lucide-react";
+import Image from "next/image";
 
 export const metadata: Metadata = {
   title: "Dashboard | Domain & Asset Management",
@@ -17,11 +18,19 @@ export default async function RootLayout({
   return (
     <>
       <header className="bg-gradient-to-r from-[#FF9149] to-[#FFAA6B] text-white shadow-sm">
-        {/* Logo centered at the top */}
-        <div className="text-center py-2">
-          <span className="text-2xl font-bold tracking-wide">
-            🇵🇸 PalArchiver
-          </span>
+        <div className="text-center py-4">
+          <div className="inline-flex items-center gap-2">
+            <Image
+              src="https://flagcdn.com/w40/ps.png"
+              alt="Palestine flag"
+              width={32}
+              height={20}
+              className="w-8 h-5 rounded shadow-sm"
+            />
+            <span className="text-2xl font-extrabold tracking-wide text-white drop-shadow-sm">
+              PalArchiver
+            </span>
+          </div>
         </div>
 
         <div className="container mx-auto px-4 py-3 flex justify-between items-center">

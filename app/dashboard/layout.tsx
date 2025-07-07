@@ -22,7 +22,7 @@ export default async function RootLayout({
           <div className="inline-flex items-center gap-2">
             <Image
               src="https://flagcdn.com/w40/ps.png"
-              alt="Palestine flag"
+              alt="Palestine flag img"
               width={32}
               height={20}
               className="w-8 h-5 rounded shadow-sm"
